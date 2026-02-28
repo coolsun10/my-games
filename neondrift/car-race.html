@@ -248,12 +248,14 @@
       playerLane: 1,
       player: { width: 52, height: 96, y: TRACK.height - 122 },
       enemies: [],
+      trees: [],
       laneCenters: [],
       score: 0,
       bestScore: Number(localStorage.getItem(STORAGE_KEY)) || 0,
       elapsedMs: 0,
       lastTime: 0,
       laneStripeOffset: 0,
+      treeSpawnCooldown: 0,
       spawnCooldown: 0,
       spawnIntervalMs: 930,
       baseEnemySpeed: 230,
@@ -343,7 +345,79 @@
       game.enemies.push({ lane, x, y: -height - 10, width, height, color });
     }
 
+    function makeTree(side, yPosition) {
+      const roadRight = TRACK.width - TRACK.roadPadding;
+      const xMin = side === 'left' ? 10 : roadRight + 9;
+      const xMax = side === 'left' ? TRACK.roadPadding - 9 : TRACK.width - 10;
+      const crownRadius = 11 + Math.random() * 7;
+      const x = xMin + Math.random() * Math.max(1, xMax - xMin);
+
+      return {
+        side,
+        x,
+        y: yPosition,
+        crownRadius,
+        trunkWidth: 4 + Math.random() * 2,
+        trunkHeight: 11 + Math.random() * 7,
+        crownColor: Math.random() > 0.5 ? '#368d4a' : '#2d7b3f'
+      };
+    }
+
+    function initTrees() {
+      game.trees = [];
+      let y = -70;
+      while (y < TRACK.height + 70) {
+        game.trees.push(makeTree('left', y + (Math.random() * 28 - 14)));
+        game.trees.push(makeTree('right', y + (Math.random() * 28 - 14)));
+        y += 72 + Math.random() * 26;
+      }
+    }
+
+    function updateTrees(deltaMs) {
+      const treeSpeed = (175 + 35 * game.speedMultiplier) * (deltaMs / 1000);
+      for (const tree of game.trees) {
+        tree.y += treeSpeed;
+      }
+
+      game.trees = game.trees.filter((tree) => tree.y < TRACK.height + tree.crownRadius + 24);
+      game.treeSpawnCooldown += deltaMs;
+
+      if (game.treeSpawnCooldown >= 210) {
+        game.treeSpawnCooldown = 0;
+        game.trees.push(makeTree('left', -25));
+        game.trees.push(makeTree('right', -25));
+      }
+    }
+
     // Rendering
+    function drawGround() {
+      ctx.fillStyle = '#1e3f2b';
+      ctx.fillRect(0, 0, TRACK.width, TRACK.height);
+    }
+
+    function drawTrees() {
+      for (const tree of game.trees) {
+        const trunkTop = tree.y - tree.trunkHeight * 0.2;
+        ctx.fillStyle = '#5a3a1e';
+        ctx.fillRect(
+          tree.x - tree.trunkWidth / 2,
+          trunkTop,
+          tree.trunkWidth,
+          tree.trunkHeight
+        );
+
+        ctx.fillStyle = tree.crownColor;
+        ctx.beginPath();
+        ctx.arc(tree.x, tree.y - 2, tree.crownRadius, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = 'rgba(255,255,255,0.12)';
+        ctx.beginPath();
+        ctx.arc(tree.x - tree.crownRadius * 0.32, tree.y - tree.crownRadius * 0.36, tree.crownRadius * 0.38, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
     function drawRoad() {
       const roadX = TRACK.roadPadding;
       const roadWidth = TRACK.width - TRACK.roadPadding * 2;
@@ -385,6 +459,8 @@
 
     function drawScene() {
       ctx.clearRect(0, 0, TRACK.width, TRACK.height);
+      drawGround();
+      drawTrees();
       drawRoad();
 
       for (const enemy of game.enemies) {
@@ -408,6 +484,7 @@
       scoreEl.textContent = String(Math.floor(game.score));
 
       updateDifficulty();
+      updateTrees(deltaMs);
 
       game.laneStripeOffset += (deltaMs / 1000) * (220 * game.speedMultiplier);
       const stripeCycle = TRACK.laneMarkHeight + TRACK.laneMarkGap;
@@ -457,6 +534,7 @@
       game.score = 0;
       game.elapsedMs = 0;
       game.laneStripeOffset = 0;
+      game.treeSpawnCooldown = 0;
       game.spawnCooldown = 0;
       game.spawnIntervalMs = 930;
       game.baseEnemySpeed = 230;
@@ -464,6 +542,7 @@
       game.lastTime = 0;
       game.inputLatch.left = false;
       game.inputLatch.right = false;
+      initTrees();
       scoreEl.textContent = '0';
       speedEl.textContent = '1.0x';
     }
@@ -493,6 +572,7 @@
     restartBtn.addEventListener('click', startGame);
 
     computeLaneCenters();
+    initTrees();
     drawScene();
     requestAnimationFrame(frame);
   </script>
