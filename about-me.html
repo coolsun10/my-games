@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Shasswin</title>
+  <style>
+    :root {
+      --sky: #c6ecff;
+      --blue: #2b7fff;
+      --deep-blue: #1148a8;
+      --sun: #ffd85a;
+      --grass: #89d66e;
+      --leaf: #2f8f46;
+      --card: rgba(255, 255, 255, 0.94);
+      --text: #15304a;
+      --muted: #4d6780;
+      --shadow: 0 22px 45px rgba(17, 72, 168, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top right, rgba(255, 216, 90, 0.75), rgba(255, 216, 90, 0) 20%),
+        linear-gradient(180deg, #8ed8ff 0%, var(--sky) 42%, #c5f5c0 42%, var(--grass) 100%);
+      padding: 28px 16px 40px;
+    }
+
+    .page {
+      width: min(1080px, 100%);
+      margin: 0 auto;
+      display: grid;
+      gap: 24px;
+    }
+
+    .hero {
+      background: var(--card);
+      border-radius: 30px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-columns: minmax(220px, 320px) minmax(0, 1fr);
+      gap: 28px;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -80px -80px auto;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: rgba(43, 127, 255, 0.12);
+    }
+
+    .photo-card {
+      position: relative;
+      z-index: 1;
+      background: linear-gradient(180deg, #fefeff 0%, #d8ebff 100%);
+      border: 4px solid #ffffff;
+      border-radius: 28px;
+      padding: 14px;
+      box-shadow: 0 16px 32px rgba(17, 72, 168, 0.18);
+    }
+
+    .photo-card img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      object-fit: cover;
+      border-radius: 20px;
+      background: #dbeafe;
+    }
+
+    .hero-copy {
+      position: relative;
+      z-index: 1;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      margin: 0 0 10px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: #e8f2ff;
+      color: var(--deep-blue);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-size: 0.82rem;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.1rem, 6vw, 4rem);
+      line-height: 1;
+    }
+
+    .lead {
+      margin: 14px 0 0;
+      max-width: 640px;
+      font-size: 1.08rem;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    .highlight-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .chip {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: #fff8d8;
+      border: 1px solid #ffe39b;
+      font-weight: 700;
+      color: #7b5700;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .card h2 {
+      margin: 0 0 12px;
+      font-size: 1.35rem;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .favorites {
+      display: grid;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .favorite-item {
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: #f3f9ff;
+      border: 1px solid #d9eaff;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .games {
+      display: grid;
+      gap: 14px;
+      margin-top: 8px;
+    }
+
+    .game-link {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, #ffffff 0%, #eff7ff 100%);
+      border: 1px solid #dbeaff;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .game-link:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(17, 72, 168, 0.12);
+    }
+
+    .game-link strong {
+      display: block;
+      font-size: 1.05rem;
+      margin-bottom: 6px;
+    }
+
+    .game-link span {
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .footer-note {
+      text-align: center;
+      color: var(--deep-blue);
+      font-weight: 700;
+      padding-top: 2px;
+    }
+
+    @media (max-width: 860px) {
+      .hero,
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .photo-card {
+        max-width: 340px;
+        margin: 0 auto;
+      }
+    }
+
+    @media (max-width: 540px) {
+      body {
+        padding: 16px 12px 28px;
+      }
+
+      .hero,
+      .card {
+        padding: 20px;
+      }
+
+      .lead,
+      .card p,
+      .game-link span {
+        font-size: 0.98rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div class="photo-card">
+        <img src="shasswin.jpeg" alt="Portrait of Shasswin Arularasan" />
+      </div>
+
+      <div class="hero-copy">
+        <p class="eyebrow">About Me</p>
+        <h1>Hi, I am Shasswin Arularasan.</h1>
+        <p class="lead">
+          I am a young game maker who loves building fun projects for kids, parents, and anyone who wants to play.
+          I am in 3rd grade, I love to travel, and I enjoy learning how to code with help from my dad.
+        </p>
+        <div class="highlight-row">
+          <div class="chip">3rd Grade Coder</div>
+          <div class="chip">Soccer Fan</div>
+          <div class="chip">Game Creator</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <h2>Things I Love</h2>
+        <div class="favorites">
+          <div class="favorite-item">Traveling to new places</div>
+          <div class="favorite-item">Playing and watching soccer</div>
+          <div class="favorite-item">Cheering for Messi and Ronaldo</div>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>My Coding Story</h2>
+        <p>
+          My dad taught me how to code, and that helped me start making my own games.
+          I like creating games that are easy to play and fun for all ages.
+        </p>
+      </article>
+
+      <article class="card">
+        <h2>Play My Games</h2>
+        <div class="games">
+          <a class="game-link" href="cookie-clicker/cookie-clicker.html">
+            <strong>Cookie Clicker</strong>
+            <span>Tap the cookie and collect as many cookies as you can.</span>
+          </a>
+          <a class="game-link" href="neondrift/car-race.html">
+            <strong>Neon Drift</strong>
+            <span>Race fast and see how long you can stay on track.</span>
+          </a>
+          <a class="game-link" href="tic-tac-toe/XOXO.html">
+            <strong>XOXO</strong>
+            <span>Play a classic tic-tac-toe game.</span>
+          </a>
+          <a class="game-link" href="math-practice/sentence-addition-simulator.html">
+            <strong>Math Game</strong>
+            <span>Solve fun sentence addition problems.</span>
+          </a>
+        </div>
+      </article>
+    </section>
+
+    <p class="footer-note">Thanks for visiting my page and trying my games.</p>
+  </main>
+</body>
+</html>
