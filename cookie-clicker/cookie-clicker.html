@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cookie Clicker Game</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: radial-gradient(circle at top, #f8ddb3 0%, #c78f3b 45%, #7a4d25 100%);
+      color: #2d1f0f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .game-shell {
+      width: min(900px, 100%);
+      background: rgba(255, 255, 255, 0.92);
+      border-radius: 24px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+      padding: 32px;
+      display: grid;
+      gap: 28px;
+    }
+
+    .header {
+      text-align: center;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: clamp(2rem, 3vw, 3rem);
+    }
+
+    .header p {
+      margin: 10px auto 0;
+      max-width: 720px;
+      color: #5c4629;
+      line-height: 1.6;
+    }
+
+    .status-panel {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .panel {
+      background: #fff6e8;
+      border: 1px solid #e2c39e;
+      border-radius: 20px;
+      padding: 22px;
+      min-height: 170px;
+    }
+
+    .panel h2 {
+      margin: 0 0 14px;
+      font-size: 1.2rem;
+      letter-spacing: 0.02em;
+    }
+
+    .cookie-counter {
+      font-size: clamp(2.4rem, 5vw, 4rem);
+      font-weight: 700;
+      line-height: 1;
+      color: #8b4f1b;
+      margin: 0;
+    }
+
+    .cookie-box {
+      display: grid;
+      justify-items: center;
+      align-items: center;
+      padding: 14px;
+      background: linear-gradient(180deg, #fffbf0 0%, #f4e3c6 100%);
+      border: 1px solid #dfc2a4;
+      border-radius: 24px;
+    }
+
+    .cookie-button {
+      width: min(320px, 100%);
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      border: 10px solid #b67335;
+      background: radial-gradient(circle at 30% 30%, #ffd79d, #d88944 55%, #ac6221 100%);
+      box-shadow: inset 0 12px 18px rgba(255,255,255,0.35), 0 10px 25px rgba(0,0,0,0.2);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+      position: relative;
+    }
+
+    .cookie-button:active {
+      transform: scale(0.96);
+      box-shadow: inset 0 20px 35px rgba(0,0,0,0.18);
+    }
+
+    .cookie-button span {
+      font-size: clamp(4rem, 7vw, 6rem);
+      user-select: none;
+      line-height: 1;
+    }
+
+    .cookie-details {
+      margin-top: 14px;
+      text-align: center;
+      color: #654221;
+      font-size: 1rem;
+    }
+
+    .upgrades {
+      display: grid;
+      gap: 16px;
+    }
+
+    .upgrade-card {
+      background: #fff8f0;
+      border: 1px solid #e2c0a0;
+      border-radius: 18px;
+      padding: 18px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .upgrade-card h3 {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .upgrade-card p {
+      margin: 0;
+      color: #5a3f27;
+      line-height: 1.5;
+    }
+
+    .upgrade-card button {
+      width: fit-content;
+      padding: 10px 16px;
+      background: #d8853d;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 0.12s ease, filter 0.12s ease;
+    }
+
+    .upgrade-card button:disabled {
+      background: #d0b8a3;
+      cursor: not-allowed;
+    }
+
+    .upgrade-card button:hover:not(:disabled) {
+      transform: translateY(-1px);
+      filter: brightness(1.04);
+    }
+
+    .reset-wrapper {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .reset-button {
+      padding: 12px 22px;
+      border-radius: 999px;
+      border: none;
+      background: #8b4f1b;
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(139,79,27,0.18);
+    }
+
+    .reset-button:hover {
+      filter: brightness(1.05);
+    }
+
+    @media (max-width: 760px) {
+      .status-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .reset-wrapper {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="game-shell">
+    <header class="header">
+      <h1>Cookie Clicker</h1>
+      <p>Click the cookie to collect cookies, then spend your cookies on upgrades to increase how many cookies you get per click.</p>
+    </header>
+
+    <div class="status-panel">
+      <section class="panel cookie-box">
+        <h2>Cookie Count</h2>
+        <p class="cookie-counter" id="cookie-count">0</p>
+        <div class="cookie-button" id="cookie-click">
+          <span>🍪</span>
+        </div>
+        <p class="cookie-details" id="cookie-rate">Cookies per click: 1</p>
+      </section>
+
+      <section class="panel upgrades">
+        <h2>Upgrades</h2>
+        <div class="upgrade-card">
+          <h3>Starter Oven</h3>
+          <p>Cost: 15 cookies. Adds +1 cookie per click.</p>
+          <button id="upgrade-1" disabled>Buy for 15</button>
+        </div>
+        <div class="upgrade-card">
+          <h3>Golden Spatula</h3>
+          <p>Cost: 50 cookies. Adds +5 cookies per click.</p>
+          <button id="upgrade-2" disabled>Buy for 50</button>
+        </div>
+        <div class="upgrade-card">
+          <h3>Factory Mixer</h3>
+          <p>Cost: 100 cookies. Adds +10 cookies per click.</p>
+          <button id="upgrade-3" disabled>Buy for 100</button>
+        </div>
+      </section>
+    </div>
+
+    <div class="reset-wrapper">
+      <button class="reset-button" id="reset-game">Reset Game</button>
+    </div>
+  </div>
+
+  <script>
+    const cookieCountElement = document.getElementById('cookie-count');
+    const cookieRateElement = document.getElementById('cookie-rate');
+    const cookieClick = document.getElementById('cookie-click');
+    const upgradeButtons = [
+      document.getElementById('upgrade-1'),
+      document.getElementById('upgrade-2'),
+      document.getElementById('upgrade-3')
+    ];
+    const resetButton = document.getElementById('reset-game');
+
+    const upgrades = [
+      { cost: 15, bonus: 1, owned: false, threshold: 15 },
+      { cost: 50, bonus: 5, owned: false, threshold: 50 },
+      { cost: 100, bonus: 10, owned: false, threshold: 100 }
+    ];
+
+    let cookieCount = 0;
+    let cookiesPerClick = 1;
+
+    function updateDisplay() {
+      cookieCountElement.textContent = cookieCount;
+      cookieRateElement.textContent = `Cookies per click: ${cookiesPerClick}`;
+
+      upgrades.forEach((upgrade, index) => {
+        const button = upgradeButtons[index];
+        if (upgrade.owned) {
+          button.textContent = 'Purchased';
+          button.disabled = true;
+        } else {
+          button.textContent = `Buy for ${upgrade.cost}`;
+          button.disabled = cookieCount < upgrade.cost || cookieCount < upgrade.threshold;
+        }
+      });
+    }
+
+    function addCookies() {
+      cookieCount += cookiesPerClick;
+      updateDisplay();
+    }
+
+    function buyUpgrade(index) {
+      const upgrade = upgrades[index];
+      if (upgrade.owned || cookieCount < upgrade.cost) return;
+      cookieCount -= upgrade.cost;
+      cookiesPerClick += upgrade.bonus;
+      upgrade.owned = true;
+      updateDisplay();
+    }
+
+    function resetGame() {
+      cookieCount = 0;
+      cookiesPerClick = 1;
+      upgrades.forEach(upgrade => (upgrade.owned = false));
+      updateDisplay();
+    }
+
+    cookieClick.addEventListener('click', addCookies);
+    upgradeButtons.forEach((button, index) => {
+      button.addEventListener('click', () => buyUpgrade(index));
+    });
+    resetButton.addEventListener('click', resetGame);
+
+    updateDisplay();
+  </script>
+</body>
+</html>
